@@ -13,5 +13,7 @@ namespace FestivalDashboardWebAPI.Models
         public string ContactName { get; set; }
         public string ContactPhone { get; set; }
         public string ContactEmail { get; set; }
+        public int OnRoad { get; set; }
+        public int OnStage { get; set; }
     }
 }
