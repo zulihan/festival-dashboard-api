@@ -16,9 +16,9 @@ namespace FestivalDashboardWebAPI.Data
             _context = context;
         }
 
-        public async Task<User> Login(string username, string password)
+        public async Task<User> Login(string name, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Name == name);
 
             if (user == null)
                 return null;
@@ -66,9 +66,9 @@ namespace FestivalDashboardWebAPI.Data
             
         }
 
-        public async Task<bool> UserExists(string username)
+        public async Task<bool> UserExists(string name)
         {
-            if (await _context.Users.AnyAsync(x => x.Username == username))
+            if (await _context.Users.AnyAsync(x => x.Name == name))
                 return true;
 
             return false;

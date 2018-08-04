@@ -139,13 +139,19 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Email");
+
+                    b.Property<string>("Name");
+
                     b.Property<byte[]>("PasswordHash");
 
                     b.Property<byte[]>("PasswordSalt");
 
-                    b.Property<string>("Role");
+                    b.Property<string>("Phone");
 
-                    b.Property<string>("Username");
+                    b.Property<string>("PhotoUrl");
+
+                    b.Property<string>("Role");
 
                     b.HasKey("Id");
 

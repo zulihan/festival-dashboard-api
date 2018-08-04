@@ -28,15 +28,18 @@ namespace FestivalDashboardWebAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
+            userForRegisterDto.Name = userForRegisterDto.Name.ToLower();
 
-            if (await _repo.UserExists(userForRegisterDto.Username))
-                return BadRequest("Username already exists");
+            if (await _repo.UserExists(userForRegisterDto.Name))
+                return BadRequest("Name already exists");
 
             var userToCreate = new User
             {
-                Username = userForRegisterDto.Username
-            };
+                Name = userForRegisterDto.Name,
+                Email = userForRegisterDto.Email,
+                Phone = userForRegisterDto.Phone,
+                Role = userForRegisterDto.Role
+        };
 
             var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
 
@@ -46,7 +49,7 @@ namespace FestivalDashboardWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
+            var userFromRepo = await _repo.Login(userForLoginDto.Name.ToLower(), userForLoginDto.Password);
 
             if (userFromRepo == null)
                 return Unauthorized();
@@ -54,7 +57,7 @@ namespace FestivalDashboardWebAPI.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
+                new Claim(ClaimTypes.Name, userFromRepo.Name)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));

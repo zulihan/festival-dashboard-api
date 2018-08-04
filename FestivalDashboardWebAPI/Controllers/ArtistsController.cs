@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FestivalDashboardWebAPI.Data;
-using FestivalDashboardWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FestivalDashboardWebAPI.Controllers
 {
@@ -16,27 +10,27 @@ namespace FestivalDashboardWebAPI.Controllers
     [ApiController]
     public class ArtistsController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IDashboardRepository _repo;
 
-        public ArtistsController(DataContext context)
+        public ArtistsController(IDashboardRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET api/artists
         [HttpGet]
         public async Task<IActionResult> GetArtists()
         {
-            var artists = await _context.Artists.ToListAsync();
+            var artists = await _repo.GetArtists();
 
             return Ok(artists);
         }
 
         // GET api/artists/5
         [HttpGet("{id}")]
-        public IActionResult GetArtist(int id)
+        public async Task<IActionResult> GetArtist(int id)
         {
-            var artist = _context.Artists.FirstOrDefault(x => x.Id == id);
+            var artist = await _repo.GetArtist(id);
 
             return Ok(artist);
         }

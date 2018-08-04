@@ -14,6 +14,7 @@ using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using FestivalDashboardWebAPI.Helpers;
+using AutoMapper;
 
 namespace FestivalDashboardWebAPI
 {
@@ -32,7 +33,10 @@ namespace FestivalDashboardWebAPI
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
+            services.AddTransient<Seed>();
+            services.AddAutoMapper();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -48,7 +52,7 @@ namespace FestivalDashboardWebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -73,6 +77,8 @@ namespace FestivalDashboardWebAPI
             }
 
             //app.UseHttpsRedirection();
+            //seeder.SeedUser();
+            //seeder.SeedArtists();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FestivalDashboardWebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20180731133119_ChangedTimeTables_tables")]
-    partial class ChangedTimeTables_tables
+    [Migration("20180803153535_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,10 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<string>("ContactPhone");
 
                     b.Property<string>("Name");
+
+                    b.Property<int>("OnRoad");
+
+                    b.Property<int>("OnStage");
 
                     b.Property<string>("PhotoUrl");
 
@@ -130,6 +134,30 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SoundChecks");
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("Name");
+
+                    b.Property<byte[]>("PasswordHash");
+
+                    b.Property<byte[]>("PasswordSalt");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("PhotoUrl");
+
+                    b.Property<string>("Role");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("FestivalDashboardWebAPI.Models.Venue", b =>
