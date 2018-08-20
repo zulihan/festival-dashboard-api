@@ -3,14 +3,16 @@ using System;
 using FestivalDashboardWebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FestivalDashboardWebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20180805003834_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,27 +81,6 @@ namespace FestivalDashboardWebAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("GetIns");
-                });
-
-            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("DateAdded");
-
-                    b.Property<string>("PublicId");
-
-                    b.Property<string>("Url");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("FestivalDashboardWebAPI.Models.SetUpWings", b =>
@@ -219,14 +200,6 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.HasOne("FestivalDashboardWebAPI.Models.Artist")
                         .WithOne("GetIn")
                         .HasForeignKey("FestivalDashboardWebAPI.Models.GetIn", "ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Photo", b =>
-                {
-                    b.HasOne("FestivalDashboardWebAPI.Models.User", "User")
-                        .WithOne("Photo")
-                        .HasForeignKey("FestivalDashboardWebAPI.Models.Photo", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

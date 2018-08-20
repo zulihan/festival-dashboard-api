@@ -30,8 +30,13 @@ namespace FestivalDashboardWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(opt =>
+                {
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddTransient<Seed>();
             services.AddAutoMapper();
             services.AddScoped<IAuthRepository, AuthRepository>();
@@ -76,8 +81,8 @@ namespace FestivalDashboardWebAPI
             }
 
             //app.UseHttpsRedirection();
-            //seeder.SeedUser();
-            //seeder.SeedArtists();
+            // seeder.SeedUser();
+            // seeder.SeedArtists();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();

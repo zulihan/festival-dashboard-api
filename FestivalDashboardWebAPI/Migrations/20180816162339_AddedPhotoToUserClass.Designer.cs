@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FestivalDashboardWebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20180803153535_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20180816162339_AddedPhotoToUserClass")]
+    partial class AddedPhotoToUserClass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,7 +37,11 @@ namespace FestivalDashboardWebAPI.Migrations
 
                     b.Property<string>("PhotoUrl");
 
+                    b.Property<int?>("VenueId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VenueId");
 
                     b.ToTable("Artists");
                 });
@@ -73,7 +77,29 @@ namespace FestivalDashboardWebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ArtistId")
+                        .IsUnique();
+
                     b.ToTable("GetIns");
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateAdded");
+
+                    b.Property<string>("Url");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("FestivalDashboardWebAPI.Models.SetUpWings", b =>
@@ -92,6 +118,9 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<int>("VenueId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtistId")
+                        .IsUnique();
 
                     b.ToTable("SetUpWings");
                 });
@@ -113,6 +142,9 @@ namespace FestivalDashboardWebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ArtistId")
+                        .IsUnique();
+
                     b.ToTable("Shows");
                 });
 
@@ -132,6 +164,9 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<int>("VenueId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtistId")
+                        .IsUnique();
 
                     b.ToTable("SoundChecks");
                 });
@@ -165,13 +200,58 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ArtistId");
-
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
 
                     b.ToTable("Venues");
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Artist", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.Venue", "Venue")
+                        .WithMany()
+                        .HasForeignKey("VenueId");
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.GetIn", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.Artist")
+                        .WithOne("GetIn")
+                        .HasForeignKey("FestivalDashboardWebAPI.Models.GetIn", "ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Photo", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.User", "User")
+                        .WithOne("Photo")
+                        .HasForeignKey("FestivalDashboardWebAPI.Models.Photo", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.SetUpWings", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.Artist")
+                        .WithOne("SetUpWings")
+                        .HasForeignKey("FestivalDashboardWebAPI.Models.SetUpWings", "ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.Show", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.Artist")
+                        .WithOne("Show")
+                        .HasForeignKey("FestivalDashboardWebAPI.Models.Show", "ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FestivalDashboardWebAPI.Models.SoundCheck", b =>
+                {
+                    b.HasOne("FestivalDashboardWebAPI.Models.Artist")
+                        .WithOne("SoundCheck")
+                        .HasForeignKey("FestivalDashboardWebAPI.Models.SoundCheck", "ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FestivalDashboardWebAPI.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
-    [ApiController]
+    [Microsoft.AspNetCore.Mvc.ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IDashboardRepository _repo;
@@ -36,7 +37,7 @@ namespace FestivalDashboardWebAPI.Controllers
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await _repo.GetUser(id);
-            var userToReturn = _mapper.Map<UserForListDto>(user);
+            var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
             return Ok(userToReturn);
         }
@@ -44,6 +45,9 @@ namespace FestivalDashboardWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
         {
+            //if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            //    return Unauthorized();
+
             var userFromRepo = await _repo.GetUser(id);
 
             _mapper.Map(userForUpdateDto, userFromRepo);

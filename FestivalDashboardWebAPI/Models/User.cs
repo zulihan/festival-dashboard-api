@@ -8,6 +8,7 @@
         public string Phone { get; set; }
         public string Role { get; set; }
         public string PhotoUrl { get; set; }
+        public Photo Photo { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using FestivalDashboardWebAPI.Data;
+﻿using AutoMapper;
+using FestivalDashboardWebAPI.Data;
 using FestivalDashboardWebAPI.Dtos;
 using FestivalDashboardWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,18 @@ using System.Threading.Tasks;
 namespace FestivalDashboardWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [Microsoft.AspNetCore.Mvc.ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
             _repo = repo;
             _config = config;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -75,8 +78,11 @@ namespace FestivalDashboardWebAPI.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
             return Ok(new {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user
             });
         }
 

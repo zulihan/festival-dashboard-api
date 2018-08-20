@@ -15,5 +15,6 @@ namespace FestivalDashboardWebAPI.Data
         public DbSet<SoundCheck> SoundChecks { get; set; }
         public DbSet<Show> Shows { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Photo> Photos { get; set; }
     }
 }

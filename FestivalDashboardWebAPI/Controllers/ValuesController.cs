@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FestivalDashboardWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [Microsoft.AspNetCore.Mvc.ApiController]
     public class ValuesController : ControllerBase
     {
         // GET api/values

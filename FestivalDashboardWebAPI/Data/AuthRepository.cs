@@ -15,7 +15,7 @@ namespace FestivalDashboardWebAPI.Data
 
         public async Task<User> Login(string name, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Name == name);
+            var user = await _context.Users.Include(p => p.Photo).FirstOrDefaultAsync(x => x.Name == name);
 
             if (user == null)
                 return null;

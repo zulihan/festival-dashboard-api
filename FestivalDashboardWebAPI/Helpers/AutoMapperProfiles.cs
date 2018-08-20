@@ -9,8 +9,19 @@ namespace FestivalDashboardWebAPI.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserForListDto>();
-            CreateMap<UserForUpdateDto, User>();                    
+            CreateMap<User, UserForListDto>()
+                .ForMember(dest => dest.PhotoUrl, opt => {
+                    opt.MapFrom(src => src.Photo.Url);
+                });
+            CreateMap<User, UserForDetailDto>()
+                .ForMember(dest => dest.PhotoUrl, opt => {
+                    opt.MapFrom(src => src.Photo.Url);
+                });
+            CreateMap<UserForUpdateDto, User>();
+
+            CreateMap<PhotoForCreationDto, Photo>();
+
+            CreateMap<Photo, PhotoForReturnDto>();
 
         }
     }
