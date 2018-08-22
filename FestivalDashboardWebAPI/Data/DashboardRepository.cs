@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FestivalDashboardWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace FestivalDashboardWebAPI.Data
 {
@@ -26,6 +28,7 @@ namespace FestivalDashboardWebAPI.Data
 
         public async Task<Artist> GetArtist(int id)
         {
+            
             var artist = await _context.Artists.FirstOrDefaultAsync(a => a.Id == id);
             return artist;
         }
@@ -35,6 +38,30 @@ namespace FestivalDashboardWebAPI.Data
             var artists = await _context.Artists.ToListAsync();
 
             return artists;
+
+            //var artistList = await (from artist in _context.Artists
+            //                         select new                                     {
+            //                             artist.Id,
+            //                             artist.Name,
+            //                             artist.PhotoUrl,
+            //                             artist.ContactEmail,
+            //                             artist.ContactName,
+            //                             artist.ContactPhone,
+            //                             artist.OnRoad,
+            //                             artist.OnStage,
+            //                             artist.DayId,
+            //                             artist.GetIn,
+            //                             artist.SetUpWings,
+            //                             artist.SoundCheck,
+            //                             artist.Show,
+            //                             artist.VenueId,
+            //                             Venue = (from venueId in artist.VenueId
+            //                                      join venue in _context.Venues
+            //                                       on venueId
+            //                                       equals venue.Id
+            //                                      select venue.Name).ToString()
+            //                         }).ToListAsync();
+            // return artistList;
         }
 
         public async Task<GetIn> GetGetIn(int id)

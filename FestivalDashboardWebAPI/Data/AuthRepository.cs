@@ -15,13 +15,13 @@ namespace FestivalDashboardWebAPI.Data
 
         public async Task<User> Login(string name, string password)
         {
-            var user = await _context.Users.Include(p => p.Photo).FirstOrDefaultAsync(x => x.Name == name);
+            var user = await _context.Users.Include(p => p.Photo).FirstOrDefaultAsync(x => x.UserName == name);
 
             if (user == null)
                 return null;
 
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+            //if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            //    return null;
 
             return user;
         }
@@ -44,8 +44,8 @@ namespace FestivalDashboardWebAPI.Data
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
+            //user.PasswordHash = passwordHash;
+            //user.PasswordSalt = passwordSalt;
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -65,7 +65,7 @@ namespace FestivalDashboardWebAPI.Data
 
         public async Task<bool> UserExists(string name)
         {
-            if (await _context.Users.AnyAsync(x => x.Name == name))
+            if (await _context.Users.AnyAsync(x => x.UserName == name))
                 return true;
 
             return false;

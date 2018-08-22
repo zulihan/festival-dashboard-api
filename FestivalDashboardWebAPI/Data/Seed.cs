@@ -1,16 +1,20 @@
 ﻿using FestivalDashboardWebAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FestivalDashboardWebAPI.Data
 {
     public class Seed
     {
         private readonly DataContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public Seed(DataContext context)
+        public Seed(DataContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public void SeedArtists()
@@ -30,21 +34,17 @@ namespace FestivalDashboardWebAPI.Data
 
         public void SeedUser()
         {
-            var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
-            var users = JsonConvert.DeserializeObject<List<User>>(userData);
-
-            foreach (var user in users)
+            if (!_userManager.Users.Any())
             {
-                byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("123456", out passwordHash, out passwordSalt);
+                var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
+                var users = JsonConvert.DeserializeObject<List<User>>(userData);
 
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                user.Name = user.Name.ToLower();       
-                _context.Users.Add(user);
+                foreach (var user in users)
+                {
+                    _userManager.CreateAsync(user, "password").Wait();
+                }                
             }
-
-            _context.SaveChanges();
+            
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

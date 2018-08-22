@@ -2,7 +2,10 @@
 using FestivalDashboardWebAPI.Data;
 using FestivalDashboardWebAPI.Dtos;
 using FestivalDashboardWebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -13,54 +16,78 @@ using System.Threading.Tasks;
 
 namespace FestivalDashboardWebAPI.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [Microsoft.AspNetCore.Mvc.ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
+        public AuthController(IConfiguration config,
+            IMapper mapper,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
-            _repo = repo;
             _config = config;
             _mapper = mapper;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            userForRegisterDto.Name = userForRegisterDto.Name.ToLower();
+            var userToCreate = _mapper.Map<User>(userForRegisterDto);
 
-            if (await _repo.UserExists(userForRegisterDto.Name))
-                return BadRequest("Name already exists");
+            var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
 
-            var userToCreate = new User
+            var userToReturn = _mapper.Map<UserForDetailDto>(userToCreate);
+
+            if (result.Succeeded)
             {
-                Name = userForRegisterDto.Name,
-                Email = userForRegisterDto.Email,
-                Phone = userForRegisterDto.Phone,
-                Role = userForRegisterDto.Role
-        };
+                return CreatedAtRoute("GetUser",
+                    new { controller = "Users", id = userToCreate.Id }, userToReturn);
+            }
 
-            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
-
-            return StatusCode(201);
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userFromRepo = await _repo.Login(userForLoginDto.Name.ToLower(), userForLoginDto.Password);
+            var user = await _userManager.FindByNameAsync(userForLoginDto.UserName);
 
-            if (userFromRepo == null)
-                return Unauthorized();
+            var result = await _signInManager
+                .CheckPasswordSignInAsync(user, userForLoginDto.Password, false);       
+            
+            if (result.Succeeded)
+            {
+                var appUser = await _userManager.Users.Include(p => p.Photo)
+                    .FirstOrDefaultAsync(u => u.NormalizedUserName == userForLoginDto.UserName.ToUpper());
 
+                var userToReturn = _mapper.Map<UserForListDto>(appUser);
+
+                return Ok(new
+                {
+                    token = GenerateJwtToken(appUser),
+                    user = userToReturn
+                });
+            }
+
+            return Unauthorized();
+
+            
+        }
+
+        private string GenerateJwtToken(User user)
+        {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Name)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
@@ -78,12 +105,7 @@ namespace FestivalDashboardWebAPI.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            var user = _mapper.Map<UserForListDto>(userFromRepo);
-
-            return Ok(new {
-                token = tokenHandler.WriteToken(token),
-                user
-            });
+            return tokenHandler.WriteToken(token);
         }
 
     }

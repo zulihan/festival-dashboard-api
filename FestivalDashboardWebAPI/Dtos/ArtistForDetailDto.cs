@@ -1,28 +1,26 @@
-﻿using System;
+﻿using FestivalDashboardWebAPI.Models;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FestivalDashboardWebAPI.Models
+namespace FestivalDashboardWebAPI.Dtos
 {
-    public class Artist
+    public class ArtistForDetailDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string PhotoUrl { get; set; }        
+        public string PhotoUrl { get; set; }
         public string ContactName { get; set; }
         public string ContactPhone { get; set; }
         public string ContactEmail { get; set; }
         public int OnRoad { get; set; }
         public int OnStage { get; set; }
-        public int  DayId { get; set; }
+        public int DayId { get; set; }
         public GetIn GetIn { get; set; }
         public SetUpWings SetUpWings { get; set; }
         public SoundCheck SoundCheck { get; set; }
         public Show Show { get; set; }
-        // [NotMapped]
         public int VenueId { get; set; }
-        // public string Venue { get; set; }
     }
 }

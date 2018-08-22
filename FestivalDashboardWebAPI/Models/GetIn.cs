@@ -8,6 +8,7 @@ namespace FestivalDashboardWebAPI.Models
     public class GetIn
     {
         public int Id { get; set; }
+        public Artist Artist { get; set; }
         public int ArtistId { get; set; }
         public int DayId { get; set; }
         public int VenueId { get; set; }

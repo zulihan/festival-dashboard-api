@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FestivalDashboardWebAPI.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [Route("api/users/{userId}/photo")]
     [ApiController]
     public class PhotosController : ControllerBase
