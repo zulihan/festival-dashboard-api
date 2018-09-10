@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FestivalDashboardWebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20180822012220_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20180909210954_UpdatedDayModel")]
+    partial class UpdatedDayModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,7 +51,7 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("DayNum");
+                    b.Property<string>("DayNum");
 
                     b.HasKey("Id");
 
@@ -144,8 +144,6 @@ namespace FestivalDashboardWebAPI.Migrations
 
                     b.HasIndex("ArtistId")
                         .IsUnique();
-
-                    b.HasIndex("VenueId");
 
                     b.ToTable("SetUpWings");
                 });
@@ -362,11 +360,6 @@ namespace FestivalDashboardWebAPI.Migrations
                     b.HasOne("FestivalDashboardWebAPI.Models.Artist", "Artist")
                         .WithOne("SetUpWings")
                         .HasForeignKey("FestivalDashboardWebAPI.Models.SetUpWings", "ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("FestivalDashboardWebAPI.Models.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

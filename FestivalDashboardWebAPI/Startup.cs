@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -85,8 +84,8 @@ namespace FestivalDashboardWebAPI
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddTransient<Seed>();
             services.AddAutoMapper();
-            services.AddScoped<IDashboardRepository, DashboardRepository>();
-            
+            services.AddScoped<IDashboardRepository, DashboardRepository>();           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

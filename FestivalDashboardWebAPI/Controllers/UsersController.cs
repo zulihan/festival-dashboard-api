@@ -12,7 +12,7 @@ namespace FestivalDashboardWebAPI.Controllers
 {
     // [Authorize]
     [Route("api/[controller]")]
-    [Microsoft.AspNetCore.Mvc.ApiController]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IDashboardRepository _repo;

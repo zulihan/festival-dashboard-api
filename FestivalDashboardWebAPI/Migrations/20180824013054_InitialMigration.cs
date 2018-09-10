@@ -120,6 +120,29 @@ namespace FestivalDashboardWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SetUpWings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ArtistId = table.Column<int>(nullable: false),
+                    DayId = table.Column<int>(nullable: false),
+                    VenueId = table.Column<int>(nullable: false),
+                    Start = table.Column<DateTime>(nullable: true),
+                    End = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SetUpWings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SetUpWings_Artists_ArtistId",
+                        column: x => x.ArtistId,
+                        principalTable: "Artists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Shows",
                 columns: table => new
                 {
@@ -293,35 +316,6 @@ namespace FestivalDashboardWebAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "SetUpWings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ArtistId = table.Column<int>(nullable: false),
-                    DayId = table.Column<int>(nullable: false),
-                    VenueId = table.Column<int>(nullable: false),
-                    Start = table.Column<DateTime>(nullable: true),
-                    End = table.Column<DateTime>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SetUpWings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SetUpWings_Artists_ArtistId",
-                        column: x => x.ArtistId,
-                        principalTable: "Artists",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SetUpWings_Venues_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -378,11 +372,6 @@ namespace FestivalDashboardWebAPI.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SetUpWings_VenueId",
-                table: "SetUpWings",
-                column: "VenueId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Shows_ArtistId",
                 table: "Shows",
                 column: "ArtistId",
@@ -431,13 +420,13 @@ namespace FestivalDashboardWebAPI.Migrations
                 name: "SoundChecks");
 
             migrationBuilder.DropTable(
+                name: "Venues");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Venues");
 
             migrationBuilder.DropTable(
                 name: "Artists");

@@ -1,5 +1,7 @@
 ﻿
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FestivalDashboardWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +28,63 @@ namespace FestivalDashboardWebAPI.Data
             _context.Remove(entity);
         }
 
+        public async Task<bool> ArtistExists(string name)
+        {
+            if (await _context.Artists.AnyAsync(x => x.Name == name))
+                return true;
+
+            return false;
+        }
+
+        public async Task<Artist> RegisterArtist(Artist artist)
+        {
+            await _context.Artists.AddAsync(artist);
+            await _context.SaveChangesAsync();
+
+            return artist;
+        }
+
         public async Task<Artist> GetArtist(int id)
         {
-            
-            var artist = await _context.Artists.FirstOrDefaultAsync(a => a.Id == id);
+
+            var artist = await _context.Artists
+                    .Include(a => a.Show)
+                    .Include(a => a.GetIn)
+                    .Include(a => a.SetUpWings)
+                    .Include(a => a.SoundCheck)
+                    .FirstOrDefaultAsync(a => a.Id == id);            
+
+            //var fullArtist = await (from v in _context.Venues
+            //                        join a in artist
+            //                        on v.Id equals artist.VenueId
+            //                        select new
+            //                        {
+            //                            Id = a.Id,
+            //                            Name = a.Name,
+            //                            PhotoUrl = a.PhotoUrl,
+            //                            ContactEmail = a.ContactEmail,
+            //                            ContactName = a.ContactName,
+            //                            ContactPhone = a.ContactPhone,
+            //                            OnRoad = a.OnRoad,
+            //                            OnStage = a.OnStage,
+            //                            DayId = a.DayId,
+            //                            GetIn = a.GetIn,
+            //                            SetUpWings = a.SetUpWings,
+            //                            SoundCheck = a.SoundCheck,
+            //                            Show = a.Show,
+            //                            Venue = venue.Name
+            //                        });
+
             return artist;
+        }
+
+        public async Task<Artist> DeleteArtist(int id)
+        {
+            var artistToDelete = await _context.Artists.FirstOrDefaultAsync(a => a.Id == id);
+            _context.Artists.Remove(artistToDelete);
+            await _context.SaveChangesAsync();
+
+            return artistToDelete;
         }
 
         public async Task<IEnumerable<Artist>> GetArtists()
@@ -76,6 +130,23 @@ namespace FestivalDashboardWebAPI.Data
 
             return getins;
         }
+
+        //public async Task<List<GetIn>> GetGetIns(int dayId)
+        //{
+        //    var getIns = await _context.GetIns.ToListAsync();
+
+        //    var getInsForDayId = await (from g in _context.GetIns
+        //                                where g.DayId == dayId
+        //                                select new
+        //                                {
+        //                                    Id = g.Id,
+        //                                    Start = g.Start,
+        //                                    End = g.End,
+        //                                    ArtistID = g.ArtistId
+        //                                }).ToListAsync();
+                        
+        //    return getInsForDayId;
+        //}
 
         public async Task<SetUpWings> GetSetUpWings(int id)
         {

@@ -1,4 +1,5 @@
 ﻿using FestivalDashboardWebAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,9 +13,15 @@ namespace FestivalDashboardWebAPI.Data
 
         Task<bool> SaveAll();
 
+        Task<bool> ArtistExists(string name);
+
+        Task<Artist> RegisterArtist(Artist artist);
+
         Task<IEnumerable<Artist>> GetArtists();
 
         Task<Artist> GetArtist(int id);
+
+        Task<Artist> DeleteArtist(int id);
 
         Task<IEnumerable<User>> GetUsers();
 
@@ -27,6 +34,8 @@ namespace FestivalDashboardWebAPI.Data
         Task<GetIn> GetGetIn(int id);
 
         Task<IEnumerable<GetIn>> GetGetIns();
+
+        // Task<IEnumerable<GetIn>> GetGetIns(int id);
 
         Task<SetUpWings> GetSetUpWings(int id);
 

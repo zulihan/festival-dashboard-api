@@ -8,6 +8,6 @@ namespace FestivalDashboardWebAPI.Models
     public class Day
     {
         public int Id { get; set; }
-        public int DayNum { get; set; }
+        public string DayNum { get; set; }
     }
 }

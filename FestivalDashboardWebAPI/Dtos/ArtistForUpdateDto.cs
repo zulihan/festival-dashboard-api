@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace FestivalDashboardWebAPI.Dtos
 {
-    public class ArtistForDetailDto
+    public class ArtistForUpdateDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string PhotoUrl { get; set; }
         public string ContactName { get; set; }
@@ -17,12 +16,10 @@ namespace FestivalDashboardWebAPI.Dtos
         public int OnRoad { get; set; }
         public int OnStage { get; set; }
         public int DayId { get; set; }
-        public string Day { get; set; }
-        public GetInForDetailDto GetIn { get; set; }
-        public SetUpWingsForDetailDto SetUpWings { get; set; }
-        public SoundCheckForDetailDto SoundCheck { get; set; }
+        public GetIn GetIn { get; set; }
+        public SetUpWings SetUpWings { get; set; }
+        public SoundCheck SoundCheck { get; set; }
         public Show Show { get; set; }
         public int VenueId { get; set; }
-        public string Venue { get; set; }
     }
 }

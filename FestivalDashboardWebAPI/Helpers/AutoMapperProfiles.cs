@@ -21,13 +21,19 @@ namespace FestivalDashboardWebAPI.Helpers
 
             CreateMap<UserForRegisterDto, User>();
 
-            CreateMap<Artist, ArtistForListDto>();
+            CreateMap<Artist, ArtistForDetailDto>();
 
             CreateMap<Artist, ArtistForListDto>();
 
-            CreateMap<ArtistForDetailDto, Artist > ();
+            CreateMap<Artist, ArtistsByDayDto>();
+
+            CreateMap<ArtistForDetailDto, Artist>();
+
+            CreateMap<ArtistForRegisterDto, Artist>();
 
             CreateMap<PhotoForCreationDto, Photo>();
+
+            CreateMap<ArtistForUpdateDto, Artist>();
 
             CreateMap<Photo, PhotoForReturnDto>();
 
