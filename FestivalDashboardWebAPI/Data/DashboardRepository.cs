@@ -209,6 +209,15 @@ namespace FestivalDashboardWebAPI.Data
             return users;
         }
 
+        public async Task<IEnumerable<User>> GetRunners()
+        {
+            var runners = await _context.Users
+                .Where(u => u.Role == "runner")
+                .Include(u => u.Photo)
+                .ToListAsync();
+            return runners;
+        }
+
         public async Task<Photo> GetPhoto(int id)
         {
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
@@ -221,6 +230,46 @@ namespace FestivalDashboardWebAPI.Data
 
         //    return photos;
         //}
+
+        public async Task<Checklist> CreateChecklist(Checklist checklist)
+        {
+            await _context.Checklists.AddAsync(checklist);
+            await _context.SaveChangesAsync();
+
+            return checklist;
+        }
+
+        public async Task<Checklist> GetArtistChecklist(int id)
+        {
+            var checklist = await _context.Checklists.FirstOrDefaultAsync(cl => cl.Id == id);
+
+            return checklist;
+        }
+
+        //public async Task<List<Checklist>> GetChecklists()
+        //{
+        //    IQueryable<Checklist> checklists = await (from checklist in _context.Chekclists
+        //                            join artist in _context.Artists
+        //                            on checklist.ArtistId equals artist.Id
+        //                            orderby artist.DayId
+        //                            select new
+        //                            {
+        //                                Id = checklist.Id,
+        //                                ArtistId = checklist.ArtistId,
+        //                                Artist = artist.Name,
+        //                                DayId = artist.DayId,
+        //                                UserId = checklist.UserId,
+        //                                InvitsChecked = checklist.InvitsChecked,
+        //                                InvitsCommnet = checklist.InvitsComment,
+        //                                RecordingChecked = checklist.RecordingChecked,
+        //                                RecordingComment = checklist.RecordingComment,
+        //                                SacemChecked = checklist.SacemChecked,
+        //                                SacemComment = checklist.SacemComment
+        //                            }.ToListAsync());
+        //    return checklists;
+        //}
+
+
 
         public async Task<bool> SaveAll()
         {

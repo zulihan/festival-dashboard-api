@@ -27,6 +27,8 @@ namespace FestivalDashboardWebAPI.Data
 
         Task<User> GetUser(int id);
 
+        Task<IEnumerable<User>> GetRunners();
+
         Task<Photo> GetPhoto(int id);
 
         //Task<IEnumerable<Photo>> GetPhotos();
@@ -52,5 +54,11 @@ namespace FestivalDashboardWebAPI.Data
         Task<Venue> GetVenue(int id);
 
         Task<IEnumerable<Venue>> GetVenues();
+
+        Task<Checklist> CreateChecklist(Checklist checklist);
+
+        Task<Checklist> GetArtistChecklist(int id);
+
+        // Task<List<Checklist>> GetChecklists();
     }
 }

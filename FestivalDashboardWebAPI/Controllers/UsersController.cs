@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FestivalDashboardWebAPI.Data;
 using FestivalDashboardWebAPI.Dtos;
+using FestivalDashboardWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,15 @@ namespace FestivalDashboardWebAPI.Controllers
     {
         private readonly IDashboardRepository _repo;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public UsersController(IDashboardRepository repo, IMapper mapper)
+        public UsersController(IDashboardRepository repo,
+            IMapper mapper,
+            UserManager<User> userManager)
         {
             _repo = repo;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -33,6 +39,15 @@ namespace FestivalDashboardWebAPI.Controllers
             return Ok(usersToReturn);
         }
 
+        [HttpGet("runners")]
+        public async Task<IActionResult> GetRunners()
+        {
+            var runners = await _repo.GetRunners();
+            var runnersToReturn = _mapper.Map<IEnumerable<RunnersForTaskDto>>(runners);
+
+            return Ok(runnersToReturn);
+        }
+
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
@@ -42,20 +57,36 @@ namespace FestivalDashboardWebAPI.Controllers
             return Ok(userToReturn);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserForUpdateDto userForUpdateDto)
         {
             //if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             //    return Unauthorized();
 
             var userFromRepo = await _repo.GetUser(id);
+            // var userFromRepo = _userManager.FindByIdAsync(id.ToString());
 
-            _mapper.Map(userForUpdateDto, userFromRepo);
+            userFromRepo.UserName = userForUpdateDto.UserName;
+            userFromRepo.Email = userForUpdateDto.Email;
+            userFromRepo.PhoneNumber = userForUpdateDto.PhoneNumber;
+            userFromRepo.Role = userForUpdateDto.Role;
 
-            if (await _repo.SaveAll())
-                return NoContent();
+            var result = await _userManager.UpdateAsync(userFromRepo);
 
-            throw new Exception($"Updating user {id} failed on save");
+            var userToReturn = _mapper.Map<UserForDetailDto>(userFromRepo);
+
+            if (result.Succeeded)
+            {
+                return CreatedAtRoute("GetUser",
+                    new { controller = "Users", id = userFromRepo.Id }, userToReturn);
+            }
+
+            return BadRequest(result.Errors);
+
+            //if (await _repo.SaveAll())
+            //    return NoContent();
+
+            //throw new Exception($"Updating user {id} failed on save");
         }
 
     }

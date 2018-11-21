@@ -24,5 +24,6 @@ namespace FestivalDashboardWebAPI.Dtos
         public Show Show { get; set; }
         public int VenueId { get; set; }
         public string Venue { get; set; }
+        public Checklist Checklist { get; set; }
     }
 }

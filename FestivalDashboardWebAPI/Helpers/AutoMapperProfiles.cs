@@ -21,9 +21,16 @@ namespace FestivalDashboardWebAPI.Helpers
 
             CreateMap<UserForRegisterDto, User>();
 
+            CreateMap<User, RunnersForTaskDto>()
+                .ForMember(dest => dest.PhotoUrl, opt => {
+                    opt.MapFrom(src => src.Photo.Url);
+                });
+
             CreateMap<Artist, ArtistForDetailDto>();
 
             CreateMap<Artist, ArtistForListDto>();
+
+            CreateMap<Artist, ArtistsNamesDto>();
 
             CreateMap<Artist, ArtistsByDayDto>();
 
@@ -36,6 +43,12 @@ namespace FestivalDashboardWebAPI.Helpers
             CreateMap<ArtistForUpdateDto, Artist>();
 
             CreateMap<Photo, PhotoForReturnDto>();
+
+            CreateMap<Checklist, ChecklistSingleDto>();
+
+            CreateMap<Checklist, ChecklistsForListDto>();
+
+            CreateMap<ChecklistForUpdateDto, Checklist>();
 
         }
     }

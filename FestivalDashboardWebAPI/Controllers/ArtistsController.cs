@@ -66,6 +66,23 @@ namespace FestivalDashboardWebAPI.Controllers
             return Ok(artistsToReturn);
         }
 
+
+        [HttpGet("names")]
+        public async Task<IActionResult> GetArtistsNames()
+        {
+            var artistsList = await _repo.GetArtists();
+
+
+            var artistsToReturn = _mapper.Map<IEnumerable<ArtistsNamesDto>>(artistsList);
+
+
+            //var artists = await _repo.GetArtists();
+            //var artistsToReturn = _mapper.Map<IEnumerable<ArtistForListDto>>(artists);
+
+            return Ok(artistsToReturn);
+        }
+
+
         [HttpGet("day/{id}")]
         public async Task<IActionResult> GetArtistsByDay(int id)
         {
@@ -120,6 +137,31 @@ namespace FestivalDashboardWebAPI.Controllers
             return Ok(artistsToReturn);
         }
 
+        [HttpGet("day/{dayId}/venue/{venueid}")]
+        public async Task<IActionResult> GetArtistsByDayByVenue(int dayId, int venueId)
+        {
+            var artistList = await (from venue in _context.Venues.Where(v => v.Id == venueId)
+                                    join artist in _context.Artists.Where(a => a.DayId == dayId)
+                                    on venue.Id equals artist.VenueId
+                                    orderby venue.Id
+                                    select new
+                                    {
+                                        Id = artist.Id,
+                                        Name = artist.Name,
+                                        DayId = artist.DayId,
+                                        GetIn = artist.GetIn,
+                                        SetUpWings = artist.SetUpWings,
+                                        SoundCheck = artist.SoundCheck,
+                                        Show = artist.Show,
+                                        VenueId = artist.VenueId,
+                                        Venue = venue.Name
+                                    }).ToListAsync();            
+
+            var artistsToReturn = _mapper.Map<IEnumerable<ArtistsByDayDto>>(artistList);
+            
+            return Ok(artistsToReturn);
+        }
+
         // GET api/artists/5
         [HttpGet("{id}", Name = "GetArtist")]
         public async Task<IActionResult> GetArtist(int id)
@@ -127,6 +169,7 @@ namespace FestivalDashboardWebAPI.Controllers
             var artist = await _repo.GetArtist(id);
             var venue = await _context.Venues.FirstOrDefaultAsync(v => v.Id == artist.VenueId);
             var day = await _context.Days.FirstOrDefaultAsync(d => d.Id == artist.DayId);
+            var checklist = await _context.Checklists.FirstOrDefaultAsync(cl => cl.ArtistId == id);
 
             var fullArtist = new
             {
@@ -145,7 +188,8 @@ namespace FestivalDashboardWebAPI.Controllers
                 SoundCheck = artist.SoundCheck,
                 Show = artist.Show,
                 VenueId = artist.VenueId,
-                Venue = venue.Name
+                Venue = venue.Name,
+                CheckList = checklist
             };
             var artistToReturn = _mapper.Map<ArtistForDetailDto>(fullArtist);
 
@@ -166,6 +210,20 @@ namespace FestivalDashboardWebAPI.Controllers
             await _repo.RegisterArtist(artistToCreate);
 
             var artistToReturn = _mapper.Map<ArtistForDetailDto>(artistToCreate);
+
+            var checklist = new Checklist()
+            {
+                ArtistId = artistToReturn.Id,
+                UserId = 0,
+                InvitsChecked = false,
+                InvitsComment = "",
+                RecordingChecked = false,
+                RecordingComment = "",
+                SacemChecked = false,
+                SacemComment = ""
+            };
+
+            await _repo.CreateChecklist(checklist);
 
             return CreatedAtRoute("GetArtist",
                 new { controller = "Artists", id = artistToCreate.Id }, artistToReturn);
@@ -198,6 +256,48 @@ namespace FestivalDashboardWebAPI.Controllers
                 return NoContent();
 
             throw new Exception($"Updating user {id} failed on save");
+        }
+
+        [HttpPut("checklist/{id}")]
+        public async Task<IActionResult> UpdateArtistChecklist(int id, ChecklistForUpdateDto checklistForUpdateDto)
+        {
+            var checklisFromRepo = await _repo.GetArtistChecklist(id);
+
+            // checklistForUpdateDto.InvitsChecked = checklistForUpdateDto.InvitsChecked == true ? 1 : 0;
+
+            _mapper.Map(checklistForUpdateDto, checklisFromRepo);
+
+            if (await _repo.SaveAll())
+                return NoContent();
+
+            throw new Exception($"Updating checklist {id} failed on save");
+        }
+
+        [HttpGet("checklists")]
+        public async Task<IActionResult> GetChecklists()
+        {
+            var checklists = await (from checklist in _context.Checklists
+                                                      join artist in _context.Artists
+                                                      on checklist.ArtistId equals artist.Id
+                                                      orderby artist.DayId
+                                                      select new
+                                                      {
+                                                          Id = checklist.Id,
+                                                          ArtistId = checklist.ArtistId,
+                                                          Artist = artist.Name,
+                                                          DayId = artist.DayId,
+                                                          UserId = checklist.UserId,
+                                                          InvitsChecked = checklist.InvitsChecked,
+                                                          InvitsComment = checklist.InvitsComment,
+                                                          RecordingChecked = checklist.RecordingChecked,
+                                                          RecordingComment = checklist.RecordingComment,
+                                                          SacemChecked = checklist.SacemChecked,
+                                                          SacemComment = checklist.SacemComment
+                                                      }).ToListAsync();
+
+            var checklistsToReturn = _mapper.Map<IEnumerable<ChecklistsForListDto>>(checklists);
+
+            return Ok(checklistsToReturn);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace FestivalDashboardWebAPI.Data
         public DbSet<Show> Shows { get; set; }
         // public DbSet<User> Users { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<Checklist> Checklists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
